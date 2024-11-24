@@ -112,6 +112,9 @@ export function ListActionPanel(props: ActionListPanelProps) {
         {props.isInstalledEudic && myPreferences.showOpenInEudicFirst && (
           <Action icon={Icon.MagnifyingGlass} title="Open in Eudic App" onAction={() => openInEudic(word)} />
         )}
+
+        <SearchAction onAction={props.onQuerySearch} />
+
         {CopyTextAction({ copyText })}
         {props.isInstalledEudic && !myPreferences.showOpenInEudicFirst && (
           <Action icon={Icon.MagnifyingGlass} title="Open in Eudic App" onAction={() => openInEudic(word)} />
@@ -195,6 +198,10 @@ export function ListActionPanel(props: ActionListPanelProps) {
       </ActionPanel.Section>
     </ActionPanel>
   );
+}
+
+function SearchAction({ onAction }: { onAction: () => void }) {
+  return <Action title="Search" icon={Icon.ArrowRight} onAction={onAction} />
 }
 
 /**

@@ -30,6 +30,7 @@ export interface ActionListPanelProps {
   isInstalledEudic: boolean;
   isShowingReleasePrompt: boolean;
   onLanguageUpdate: (language: LanguageItem) => void;
+  onQuerySearch: () => void;
 }
 
 export enum TranslationType {

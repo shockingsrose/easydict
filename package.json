@@ -6,7 +6,9 @@
   "icon": "Eudic.png",
   "author": "isfeng",
   "license": "MIT",
-  "contributors": [],
+  "contributors": [
+    "storm_spirit"
+  ],
   "commands": [
     {
       "name": "easydict",

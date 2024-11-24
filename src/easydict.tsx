@@ -8,7 +8,7 @@
  * Copyright (c) 2022 by tisfeng, All Rights Reserved.
  */
 
-import { Icon, LaunchProps, List, getSelectedText } from "@raycast/api";
+import { Action, ActionPanel, Icon, LaunchProps, List, getSelectedText } from "@raycast/api";
 import { useEffect, useState } from "react";
 import { configAxiosProxy, delayGetSystemProxy } from "./axiosConfig";
 import { ListActionPanel, checkIfPreferredLanguagesConflict, getListItemIcon, getWordAccessories } from "./components";
@@ -210,7 +210,7 @@ export default function (props: LaunchProps<{ arguments: EasydictArguments }>) {
    * Update input text and search text, then query text according to @isDelay
    */
   function updateInputTextAndQueryText(text: string, isDelay: boolean) {
-    console.log(`update input text: ${text}, length: ${text.length}`);
+    console.log(`update input text: ${text}, length: ${text.length}, isDelay: ${isDelay}`);
 
     setInputText(text);
     const trimText = trimTextLength(text);
@@ -224,11 +224,26 @@ export default function (props: LaunchProps<{ arguments: EasydictArguments }>) {
     }
 
     // Only different input text, then clear old results before new input text query.
-    if (trimText !== searchText) {
-      dataManager.clearQueryResult();
-      const toLanguage = userSelectedTargetLanguageItem.youdaoLangCode;
-      dataManager.delayQueryText(trimText, toLanguage, isDelay);
-    }
+    // if (trimText !== searchText) {
+    //   dataManager.clearQueryResult();
+    //   const toLanguage = userSelectedTargetLanguageItem.youdaoLangCode;
+    //   dataManager.delayQueryText(trimText, toLanguage, isDelay);
+    // }
+  }
+
+  function fetchQueryResult(text: string, isDelay: boolean) {
+    const toLanguage = userSelectedTargetLanguageItem.youdaoLangCode;
+    dataManager.delayQueryText(text, toLanguage, isDelay);
+  }
+
+  function handleQuerySearch() {
+    const trimText = inputText ? trimTextLength(inputText) : '';
+
+    console.log(`handleQuerySearch: ${trimText}, searchText: ${searchText}`);
+
+    // if (trimText === searchText) return;
+
+    fetchQueryResult(trimText, false);
   }
 
   function onInputChange(text: string) {
@@ -250,7 +265,9 @@ export default function (props: LaunchProps<{ arguments: EasydictArguments }>) {
       searchBarPlaceholder={"Search word or translate text..."}
       searchText={inputText}
       onSearchTextChange={onInputChange}
-      actions={null}
+      actions={<ActionPanel>
+        <Action title="Search" icon={Icon.ArrowRight} onAction={handleQuerySearch} />
+      </ActionPanel>}
     >
       {displayResult.map((resultItem, idx) => {
         const sectionKey = `${resultItem.type}${idx}`;
@@ -270,6 +287,7 @@ export default function (props: LaunchProps<{ arguments: EasydictArguments }>) {
                   detail={<List.Item.Detail markdown={item.detailsMarkdown} />}
                   actions={
                     <ListActionPanel
+                      onQuerySearch={handleQuerySearch}
                       displayItem={item}
                       isShowingReleasePrompt={isShowingReleasePrompt}
                       isInstalledEudic={isInstalledEudic}
